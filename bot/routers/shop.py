@@ -60,11 +60,11 @@ async def cart_handler(message: Message, state: FSMContext, tg_user: TelegramUse
         cart_dal = CartDAL(session)
         cart_products = await cart_dal.get_cart_products(cart.id)
         if not cart_products:
-            await message.answer(f"{t("Ваша корзина пуста", tg_user.language)}")
+            await message.answer(f"{t('Ваша корзина пуста', tg_user.language)}")
             category_dal = CategoryDAL(session)
             categories = await category_dal.get_categories(tg_user.language)
             category_titles = [category.title for category in categories]
-            await message.answer(f"{t("Выберите категорию", tg_user.language)}",
+            await message.answer(f"{t('Выберите категорию', tg_user.language)}",
                                  reply_markup=get_main_buttons(category_titles, tg_user.language))
             await state.set_state(ShopState.category)
         else:
