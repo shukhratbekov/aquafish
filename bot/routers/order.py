@@ -15,7 +15,7 @@ router = Router()
 
 
 @router.message(F.text == '🛍 Мои заказы')
-@router.message(F.text == f'🛍 {t("Мои заказы", 'uz')}')
+@router.message(F.text == f'🛍 {t("Мои заказы", "uz")}')
 async def get_orders(message: Message, tg_user: TelegramUser):
     async with async_session() as session:
         order_dal = OrderDAL(session)

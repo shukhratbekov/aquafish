@@ -8,7 +8,7 @@ def get_main_buttons(titles, lang='ru'):
     for title in titles:
         builder.button(text=title)
     builder.adjust(2)
-    builder.row(KeyboardButton(text=f"📥 {t("Корзина", lang)}"), KeyboardButton(text=f"◀️ {t('Назад', lang)}"))
+    builder.row(KeyboardButton(text=f"📥 {t('Корзина', lang)}"), KeyboardButton(text=f"◀️ {t('Назад', lang)}"))
     markup = builder.as_markup()
     markup.resize_keyboard = True
     return markup
