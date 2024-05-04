@@ -1,7 +1,6 @@
 from aiogram.types import Message
 from aiogram.utils.formatting import HashTag
 
-
 from dals.order import OrderDAL
 from dals.shop import ProductDAL, CartDAL
 
@@ -24,9 +23,9 @@ async def get_geocode(latitude, longitude):
 
 
 async def get_order_text(order_id, status, shipping, products, total_price, shipping_price, lang):
-    text = f'<b>{t("Заказ", lang)}:</b> #{order_id}\n<b>{t("Статус", lang)}:</b> {status}\n<b>{t("Доставка", lang)}:</b> {shipping}\n\n'
+    text = f'<b>{t('Заказ', lang)}:</b> #{order_id}\n<b>{t('Статус', lang)}:</b> {status}\n<b>{t('Доставка', lang)}:</b> {shipping}\n\n'
     text += products
-    text += f'\n<b>{t("Товары", lang)}: </b>{total_price} {t("сум", lang)}\n<b>{t("Доставка", lang)}: </b> {shipping_price} {t("сум", lang)}\n<b>{t("Итого", lang)}: </b> {total_price + shipping_price} {t("сум", lang)}\n'
+    text += f'\n<b>{t('Товары', lang)}: </b>{total_price} {t('сум', lang)}\n<b>{t('Доставка', lang)}: </b> {shipping_price} {t('сум', lang)}\n<b>{t('Итого', lang)}: </b> {total_price + shipping_price} {t('сум', lang)}\n'
     return text
 
 
@@ -78,9 +77,6 @@ async def get_or_create_cart(user_id):
     return await get_cart(user_id)
 
 
-
-
-
 async def send_order(message: Message, order_id: int, tg_user: TelegramUser):
     async with async_session() as session:
 
@@ -89,7 +85,7 @@ async def send_order(message: Message, order_id: int, tg_user: TelegramUser):
         order_products = await order_dal.get_order_products(order_id)
         text = f"<b>Заказ:</b> #{order_id}\n<b>Клиент: </b>{tg_user.first_name} {tg_user.last_name}\n"
         text += f"<b>Телефон: </b>{order.phone_number}\n"
-        text += f"<b>Дата Создания:</b> {order.created_at.strftime("%Y-%m-%d %H:%M:%S")}\n"
+        text += f"<b>Дата Создания:</b> {order.created_at.strftime('%Y-%m-%d %H:%M:%S')}\n"
         total_price = 0
         products_text = ''
         for order_product in order_products:
