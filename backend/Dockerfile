@@ -22,7 +22,6 @@ COPY . /app/
 # Собираем статические файлы Django
 RUN python manage.py collectstatic --noinput
 RUN python manage.py makemigrations --noinput
-RUN python manage.py migrate --noinput
 
 # Запускаем Gunicorn для приложения Django
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "core.wsgi:application"]

@@ -37,3 +37,6 @@ services:
         - django_app
         - bot_app
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+volumes:
+  postgres_data:

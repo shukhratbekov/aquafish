@@ -13,6 +13,7 @@ PG_HOST = os.getenv('PG_HOST')
 PG_PORT = os.getenv('PG_PORT')
 
 WEBHOOK_URI = os.getenv('WEBHOOK_URI')
+DJANGO_URL = os.getenv('DJANGO_URI')
 
 trans_dict = {
     "ru": {

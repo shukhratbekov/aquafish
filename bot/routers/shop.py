@@ -14,7 +14,7 @@ from models.base import async_session
 from models.cart import Cart
 from models.user import TelegramUser
 
-from configs import t
+from configs import t, DJANGO_URL
 
 from utils import get_geocode, get_order_text, send_order, create_order, create_order_products, create_order_shipping, \
     get_status
@@ -148,7 +148,7 @@ async def category_handler(message: Message, state: FSMContext, tg_user: Telegra
         if category:
             text = f"<b>{category.title}</b>\n{category.description}"
             if category.photo:
-                pass
+                await message.answer_photo(DJANGO_URL + category.photo, caption=text)
             else:
                 await message.answer(text)
             subcategories = await category_dal.get_subcategories(tg_user.language, category.master_id)
@@ -199,7 +199,7 @@ async def subcategory_handler(message: Message, state: FSMContext, tg_user: Tele
         if subcategory:
             text = f"<b>{subcategory.title}</b>\n{subcategory.description}"
             if subcategory.photo:
-                pass
+                await message.answer_photo(DJANGO_URL + subcategory.photo, caption=text)
             else:
                 await message.answer(text)
             product_dal = ProductDAL(session)
@@ -258,9 +258,8 @@ async def product_handler(message: Message, state: FSMContext, tg_user: Telegram
         product = await product_dal.get_product_by_title(message.text)
         if product:
             if product.photo:
-                # TODO: Временно пока на сервер не залью
                 text = f'<b>{product.title}</b>\n\n{product.description}\n<b>{t('Цена', tg_user.language)}:</b>{product.price}'
-                await message.answer(text, reply_markup=get_quantity_buttons(lang=tg_user.language))
+                await message.answer_photo(DJANGO_URL+product.photo, caption=text, reply_markup=get_quantity_buttons(lang=tg_user.language))
                 await state.update_data(product=product.master_id)
                 await state.update_data(quantity=1)
                 await state.set_state(ShopState.quantity)
