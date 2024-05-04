@@ -42,19 +42,19 @@ class OrderState(StatesGroup):
 
 
 @router.message(F.text == "🛒 Каталог")
-@router.message(F.text == f"🛒 {t("Каталог", "uz")}")
+@router.message(F.text == f"🛒 {t('Каталог', 'uz')}")
 async def catalog_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     async with async_session() as session:
         category_dal = CategoryDAL(session)
         categories = await category_dal.get_categories(tg_user.language)
         category_titles = [category.title for category in categories]
-        await message.answer(f"{t("Выберите категорию", tg_user.language)}",
+        await message.answer(f"{t('Выберите категорию', tg_user.language)}",
                              reply_markup=get_main_buttons(category_titles, tg_user.language))
         await state.set_state(ShopState.category)
 
 
 @router.message(F.text == "📥 Корзина")
-@router.message(F.text == f"📥 {t("Корзина", "uz")}")
+@router.message(F.text == f"📥 {t('Корзина', 'uz')}")
 async def cart_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     async with async_session() as session:
         cart_dal = CartDAL(session)
@@ -68,7 +68,7 @@ async def cart_handler(message: Message, state: FSMContext, tg_user: TelegramUse
                                  reply_markup=get_main_buttons(category_titles, tg_user.language))
             await state.set_state(ShopState.category)
         else:
-            text = f"<b>{t("Ваша Корзина", tg_user.language)}:</b>\n"
+            text = f"<b>{t('Ваша Корзина', tg_user.language)}:</b>\n"
             total_price = 0
             cart_product_titles = []
             cart_product_ids = []
@@ -79,7 +79,7 @@ async def cart_handler(message: Message, state: FSMContext, tg_user: TelegramUse
                 text += f"{cart_product.quantity} ✖️ {product.title}\n"
                 cart_product_titles.append([product.title, cart_product.product_id])
                 total_price += cart_product.quantity * product.price
-            text += f"<b>{t("Общая Сумма", tg_user.language)}:</b> {total_price} {t("сум", tg_user.language)}"
+            text += f"<b>{t('Общая Сумма', tg_user.language)}:</b> {total_price} {t('сум', tg_user.language)}"
             await message.answer(t("Выберите действие", tg_user.language),
                                  reply_markup=get_back_button(tg_user.language))
             await message.answer(text, reply_markup=get_cart_buttons(cart_product_titles, tg_user.language))
@@ -120,7 +120,7 @@ async def cart_product_handler(call: CallbackQuery, state: FSMContext, tg_user: 
 
 
 @router.message(F.text == "◀️ Назад", CartState.action)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", CartState.action)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", CartState.action)
 async def cart_back_category_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     async with async_session() as session:
         category_dal = CategoryDAL(session)
@@ -132,7 +132,7 @@ async def cart_back_category_handler(message: Message, state: FSMContext, tg_use
 
 
 @router.message(F.text == "◀️ Назад", ShopState.category)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", ShopState.category)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", ShopState.category)
 async def back_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     await message.answer(t("Выберите одно из следующих действий", tg_user.language),
                          reply_markup=get_menu_buttons(tg_user.language))
@@ -179,7 +179,7 @@ async def category_handler(message: Message, state: FSMContext, tg_user: Telegra
 
 
 @router.message(F.text == "◀️ Назад", ShopState.subcategory)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", ShopState.subcategory)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", ShopState.subcategory)
 async def back_category_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     async with async_session() as session:
         category_dal = CategoryDAL(session)
@@ -229,7 +229,7 @@ async def subcategory_handler(message: Message, state: FSMContext, tg_user: Tele
 
 
 @router.message(F.text == "◀️ Назад", ShopState.product)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", ShopState.product)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", ShopState.product)
 async def back_subcategory_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     data = await state.get_data()
     subcategory_id = data['subcategory']
@@ -258,13 +258,13 @@ async def product_handler(message: Message, state: FSMContext, tg_user: Telegram
         product = await product_dal.get_product_by_title(message.text)
         if product:
             if product.photo:
-                text = f'<b>{product.title}</b>\n\n{product.description}\n<b>{t('Цена', tg_user.language)}:</b>{product.price}'
+                text = f'<b>{product.title}</b>\n\n{product.description}\n<b>{t("Цена", tg_user.language)}:</b>{product.price}'
                 await message.answer_photo(DJANGO_URL+product.photo, caption=text, reply_markup=get_quantity_buttons(lang=tg_user.language))
                 await state.update_data(product=product.master_id)
                 await state.update_data(quantity=1)
                 await state.set_state(ShopState.quantity)
             else:
-                text = f'<b>{product.title}</b>\n\n{product.description}\n<b>{t('Цена', tg_user.language)}:</b>{product.price}'
+                text = f'<b>{product.title}</b>\n\n{product.description}\n<b>{t("Цена", tg_user.language)}:</b>{product.price}'
                 await message.answer(text, reply_markup=get_quantity_buttons(lang=tg_user.language))
                 await state.update_data(product=product.master_id)
                 await state.update_data(quantity=1)
@@ -280,7 +280,7 @@ async def product_handler(message: Message, state: FSMContext, tg_user: Telegram
 
 
 @router.message(F.text == "◀️ Назад", ShopState.quantity)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", ShopState.quantity)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", ShopState.quantity)
 async def back_product_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     data = await state.get_data()
     category_id = data['category']
@@ -356,7 +356,7 @@ async def start_order_handler(call: CallbackQuery, state: FSMContext, tg_user: T
 
 
 @router.message(F.text == "◀️ Назад", OrderState.phone_number)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", OrderState.phone_number)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", OrderState.phone_number)
 async def back_order_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     async with async_session() as session:
         category_dal = CategoryDAL(session)
@@ -384,7 +384,7 @@ async def phone_number_handler(message: Message, state: FSMContext, tg_user: Tel
 
 
 @router.message(F.text == "◀️ Назад", OrderState.shipping)
-@router.message(F.text == f"◀️ {t("Назад", 'uz')}", OrderState.shipping)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", OrderState.shipping)
 async def back_phone_number_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     await message.answer(t("Отправьте номер телефона в таком формате +998 ** *** ** **", tg_user.language),
                          reply_markup=get_phone_number_button(tg_user.language))
@@ -415,7 +415,7 @@ async def shipping_handler(message: Message, state: FSMContext, tg_user: Telegra
                                             total_price, 0, tg_user.language)
                 await message.answer(text)
                 await send_order(message, order_id, tg_user)
-                await message.answer(f"{t("Оформим еще заказы", tg_user.language)}?",
+                await message.answer(f"{t('Оформим еще заказы', tg_user.language)}?",
                                      reply_markup=get_menu_buttons(tg_user.language))
                 await state.clear()
                 await cart_dal.clear_cart(cart.id)
@@ -430,7 +430,7 @@ async def shipping_handler(message: Message, state: FSMContext, tg_user: Telegra
 
 
 @router.message(F.text == "◀️ Назад", OrderState.location)
-@router.message(F.text == f"◀️ {t("Назад", "uz")}", OrderState.location)
+@router.message(F.text == f"◀️ {t('Назад', 'uz')}", OrderState.location)
 async def back_shipping_handler(message: Message, state: FSMContext, tg_user: TelegramUser, cart: Cart):
     await message.answer(t("Выберите тип заказа", tg_user.language),
                          reply_markup=get_shipping_buttons(tg_user.language))
@@ -460,12 +460,12 @@ async def location_handler(message: Message, state: FSMContext, tg_user: Telegra
 
                 await message.answer(text)
                 await send_order(message, order_id, tg_user)
-                await message.answer(f"{t("Оформим еще заказы", tg_user.language)}?",
+                await message.answer(f"{t('Оформим еще заказы', tg_user.language)}?",
                                      reply_markup=get_menu_buttons(tg_user.language))
                 await state.clear()
                 await cart_dal.clear_cart(cart.id)
             else:
-                await message.answer(f"{t("Ваша корзина пуста", tg_user.language)}",
+                await message.answer(f"{t('Ваша корзина пуста', tg_user.language)}",
                                      reply_markup=get_menu_buttons(tg_user.language))
                 await state.clear()
     else:

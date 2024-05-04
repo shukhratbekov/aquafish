@@ -34,9 +34,9 @@ async def get_orders(message: Message, tg_user: TelegramUser):
                     order_shipping = await order_dal.get_order_shipping(order.id)
                     order_shipping = order_shipping.address
                 else:
-                    order_shipping = f'{t('Самовывоз', tg_user.language)}'
+                    order_shipping = f'{t("Самовывоз", tg_user.language)}'
                 text = await get_order_text(order.id, get_status(order.status, tg_user.language), order_shipping,
                                             product_text, order.final_price,
                                             10000 if order.shipping else 0, tg_user.language)
-                text += f"\n<b>{t('Дата Создания', tg_user.language)}:</b> {order.created_at.strftime("%Y-%m-%d %H:%M:%S")}"
+                text += f"\n<b>{t('Дата Создания', tg_user.language)}:</b> {order.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
                 await message.answer(text)
