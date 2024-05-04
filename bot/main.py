@@ -51,5 +51,4 @@ async def create_item(request: Request):
     await dp.feed_webhook_update(bot, update)
 
 
-if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+
