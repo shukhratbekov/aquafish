@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  django_app:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+  bot_app:
+    build:
+      context: ./bot
+    ports:
+      - "8001:8081"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${PG_NAME}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    env_file:
+      - .env
+    container_name: postgres
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    depends_on:
+        - django_app
+        - bot_app
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

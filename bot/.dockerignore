@@ -1,0 +1,5 @@
+venv
+test.py
+translator.py
+language.json
+translation_dict.json
