@@ -2,7 +2,7 @@
 FROM nginx:latest
 
 # Копирование конфигураций Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/nginx.conf
 
 # Открытие портов
 EXPOSE 80
