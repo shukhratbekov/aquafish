@@ -1,0 +1,16 @@
+[Unit]
+Description=Gunicorn daemon for Django Project
+After=network.target
+
+[Service]
+User=your_username
+Group=www-data
+WorkingDirectory=/path/to/your/django/project
+ExecStart=/aquafish/backend/venv/bin/gunicorn core.wsgi:application --bind 127.0.0.1:8000
+Restart=on-failure
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
