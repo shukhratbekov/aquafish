@@ -6,13 +6,16 @@ services:
       context: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - static-volume:/static
     depends_on:
       - postgres
   bot_app:
     build:
       context: ./bot
     ports:
-      - "8001:8081"
+      - "8001:8001"
+
     depends_on:
       - postgres
   postgres:
@@ -31,12 +34,22 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     depends_on:
         - django_app
         - bot_app
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: always
+  certbot:
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot certonly --webroot -w /var/www/certbot --email shukhratbekovb@gmail.com --agree-tos --no-eff-email -d shukhratbekov.uz -d bot.shukhratbekov.uz; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
 
 volumes:
   postgres_data:
+  certbot-etc:
+  certbot-var:
+  static-volume:
